@@ -7,7 +7,7 @@
 #define SP_GREEN_MAX 63
 #define SP_BLUE_MAX 31
 
-#define RGB565( b, g, r ) ( ( r << 11 ) | ( g << 5 ) | ( b ) )
+#define RGB565( r, g, b ) ( ( r << 11 ) | ( g << 5 ) | ( b ) )
 
 #if defined __AVR__
 #include <avr/pgmspace.h>
@@ -36,7 +36,7 @@ typedef void ( *SetAddressWindowProc ) ( int x0, int y0, int x1, int y1 );
  * @param Pixels Pointer to 16bit pixels to draw
  * @param Count Number of 16bit words to write to the LCD
  */
-typedef void ( *WritePixelsProc ) ( const uint16_t* Pixels, size_t Count );
+typedef void ( *WritePixelsProc ) ( uint16_t* Pixels, size_t Count );
 
 /**
  * @brief Decodes the given 1bpp linear font data into subpixels
@@ -132,5 +132,6 @@ public:
 };
 
 extern const Subpixie_Fontdef Font_8x8;
+extern const Subpixie_Fontdef Font_6x8;
 
 #endif

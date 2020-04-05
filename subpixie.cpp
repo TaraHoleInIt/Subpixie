@@ -33,8 +33,19 @@ void Subpixie::SetFont( const Subpixie_Fontdef* Font, bool Wide ) {
 }
 
 const uint8_t* Subpixie::GetGlyphPtr( const uint8_t Char ) {
-    uint8_t c = ( Char >= _Font->FirstChar && Char <= _Font->LastChar ) ? Char - _Font->FirstChar : 0;
-    return &_Font->Fontdata[ c * ( ( _Font->Width * _Font->Height ) / 8 ) ];
+    const uint8_t* Ptr = _Font->Fontdata;
+    uint8_t RoundedWidth = 0;
+    char c = 0;
+
+    // Make sure the glyph exists in the font
+    // if not then it will just return a pointer to the first glyph
+    c = ( Char >= _Font->FirstChar && Char <= _Font->LastChar ) ? Char - _Font->FirstChar : 0;
+
+    // Font widths must be rounded up to a multiple of 8
+    RoundedWidth = ( _Font->Width + 7 ) / 8;
+
+    // Return a pointer to glyph data
+    return Ptr + ( ( c * RoundedWidth * _Font->Height ) );
 }
 
 void Subpixie::DecodeGlyphSubpixel( const uint8_t Char ) {
