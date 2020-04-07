@@ -93,3 +93,35 @@ size_t Subpixie::write( const uint8_t Data ) {
 
     return 1;
 }
+
+void Subpixie::GetPrintCoords( int& x, int& y ) {
+    x = PrintX;
+    y = PrintY;
+}
+
+void Subpixie::SetPrintCoords( int x, int y ) {
+    PrintX = x;
+    PrintY = y;
+}
+
+const uint16_t Subpixie::SubpxDecodeTable_Wide[ 8 ][ 2 ] = {
+	{ RGB565( 0, 0, 0 ), RGB565( 0, 0, 0 ) }, // 000
+	{ RGB565( 0, 0, 0 ), RGB565( 0, 63, 31 ) }, // 001
+	{ RGB565( 0, 0, 31 ), RGB565( 31, 0, 0 ) }, // 010
+	{ RGB565( 0, 0, 31 ), RGB565( 31, 63, 31 ) }, // 011
+	{ RGB565( 31, 63, 0 ), RGB565( 0, 0, 0 ) }, // 100
+	{ RGB565( 31, 63, 0 ), RGB565( 0, 63, 31 ) }, // 101
+	{ RGB565( 31, 63, 31 ), RGB565( 31, 0, 0 ) }, // 110
+	{ RGB565( 31, 63, 31 ), RGB565( 31, 63, 31 ) } // 111
+};
+
+const uint16_t Subpixie::SubpxDecodeTable[ 8 ] = {
+	RGB565( 0, 0, 0 ),	// 000
+	RGB565( 0, 0, 31 ),	// 001
+	RGB565( 0, 63, 0 ),	// 010
+	RGB565( 0, 63, 31 ),	// 011
+	RGB565( 31, 0, 0 ),	// 100
+	RGB565( 31, 0, 31 ),	// 101
+	RGB565( 31, 63, 0 ),	// 110
+	RGB565( 31, 63, 31 )	// 111
+};

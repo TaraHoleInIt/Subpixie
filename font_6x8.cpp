@@ -85,52 +85,29 @@ const Subpixie_Fontdef Font_6x8 = {
 
 static void Decode6x8_Wide( const uint8_t* GlyphPtr, uint16_t* Buffer ) {
 	uint8_t Data = 0;
-	uint8_t r = 0;
-	uint8_t g = 0;
-	uint8_t b = 0;
 	int y = 0;
 
 	for ( y = 0; y < Font_6x8.Height; y++ ) {
 		Data = Subpixie_Font_Get_Byte( GlyphPtr++ );
 
-		r = ( Data & 0x80 ) ? SP_RED_MAX : 0;
-		g = ( Data & 0x80 ) ? SP_GREEN_MAX : 0;
-		
-		b = ( Data & 0x40 ) ? SP_BLUE_MAX : 0; *Buffer++ = RGB565( r, g, b );
-		r = ( Data & 0x40 ) ? SP_RED_MAX : 0;
-		
-		g = ( Data & 0x20 ) ? SP_GREEN_MAX : 0;
-		b = ( Data & 0x20 ) ? SP_BLUE_MAX : 0; *Buffer++ = RGB565( r, g, b );
+		*Buffer++ = Subpixie::SubpxDecodeTable_Wide[ ( Data >> 5 ) & 0x07 ][ 0 ];
+		*Buffer++ = Subpixie::SubpxDecodeTable_Wide[ ( Data >> 5 ) & 0x07 ][ 1 ];
 
-		r = ( Data & 0x10 ) ? SP_RED_MAX : 0;
-		g = ( Data & 0x10 ) ? SP_GREEN_MAX : 0;
-
-		b = ( Data & 0x08 ) ? SP_BLUE_MAX : 0; *Buffer++ = RGB565( r, g, b );
-		r = ( Data & 0x08 ) ? SP_RED_MAX : 0;
-
-		g = ( Data & 0x04 ) ? SP_GREEN_MAX : 0;
-		b = ( Data & 0x04 ) ? SP_BLUE_MAX : 0; *Buffer++ = RGB565( r, g, b );
+		*Buffer++ = Subpixie::SubpxDecodeTable_Wide[ ( Data >> 2 ) & 0x07 ][ 0 ];
+		*Buffer++ = Subpixie::SubpxDecodeTable_Wide[ ( Data >> 2 ) & 0x07 ][ 1 ];
 	}
 }
 
 static void Decode6x8( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Wide ) {
 	uint8_t Data = 0;
-	uint8_t r = 0;
-	uint8_t g = 0;
-	uint8_t b = 0;
 	int y = 0;
 
 	if ( Wide == false ) {
 		for ( y = 0; y < Font_6x8.Height; y++ ) {
 			Data = Subpixie_Font_Get_Byte( GlyphPtr++ );
 
-			r = ( Data & 0x80 ) ? SP_RED_MAX : 0;
-			g = ( Data & 0x40 ) ? SP_GREEN_MAX : 0;
-			b = ( Data & 0x20 ) ? SP_BLUE_MAX : 0; *Buffer++ = RGB565( r, g, b );
-
-			r = ( Data & 0x10 ) ? SP_RED_MAX : 0;
-			g = ( Data & 0x08 ) ? SP_GREEN_MAX : 0;
-			b = ( Data & 0x04 ) ? SP_BLUE_MAX : 0; *Buffer++ = RGB565( r, g, b );
+			*Buffer++ = Subpixie::SubpxDecodeTable[ ( Data >> 5 ) & 0x07 ];
+			*Buffer++ = Subpixie::SubpxDecodeTable[ ( Data >> 2 ) & 0x07 ];
 		}
 
 		return;

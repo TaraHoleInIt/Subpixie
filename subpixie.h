@@ -3,11 +3,7 @@
 
 #include <Arduino.h>
 
-#define SP_RED_MAX 31
-#define SP_GREEN_MAX 63
-#define SP_BLUE_MAX 31
-
-#define RGB565( r, g, b ) ( ( r << 11 ) | ( g << 5 ) | ( b ) )
+#define RGB565( r, g, b ) ( uint16_t ) ( ( r << 11 ) | ( g << 5 ) | ( b ) )
 
 #if defined __AVR__
 #include <avr/pgmspace.h>
@@ -103,6 +99,9 @@ private:
     void DrawGlyph( int x, int y );
 
 public:
+    static const uint16_t SubpxDecodeTable_Wide[ 8 ][ 2 ];
+    static const uint16_t SubpxDecodeTable[ 8 ];
+
     /** 
      * Creates a new Subpixie renderer with the given parameters.
      * @param DisplayWidth Width of LCD screen
@@ -129,6 +128,22 @@ public:
      * @return size_t Number of characters written
      */
     virtual size_t write( const uint8_t Data );
+
+    /**
+     * @brief Gives the caller the current x and y coordinates of the print cursor
+     * 
+     * @param x X coordinate
+     * @param y Y coordinate
+     */
+    void GetPrintCoords( int& x, int& y );
+
+    /**
+     * @brief Set the coordinates of the print cursor
+     * 
+     * @param x New x coordinate
+     * @param y New y coordinate
+     */
+    void SetPrintCoords( int x, int y );
 };
 
 extern const Subpixie_Fontdef Font_8x8;
