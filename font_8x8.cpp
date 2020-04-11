@@ -112,13 +112,13 @@ static void Decode8x8_Wide( const uint8_t* GlyphPtr, uint16_t* Buffer ) {
 	for ( y = 0; y < Font_8x8.Height; y++ ) {
 		Data = Subpixie_Font_Get_Byte( GlyphPtr++ );
 
-		*Buffer++ = Subpixie::SubpxDecodeTable_Wide[ ( Data >> 5 ) & 0x07 ][ 0 ];
-		*Buffer++ = Subpixie::SubpxDecodeTable_Wide[ ( Data >> 5 ) & 0x07 ][ 1 ];
+		*Buffer++ = SubpxDecodeTable_Wide[ ( Data >> 5 ) & 0x07 ][ 0 ];
+		*Buffer++ = SubpxDecodeTable_Wide[ ( Data >> 5 ) & 0x07 ][ 1 ];
 
-		*Buffer++ = Subpixie::SubpxDecodeTable_Wide[ ( Data >> 2 ) & 0x07 ][ 0 ];
-		*Buffer++ = Subpixie::SubpxDecodeTable_Wide[ ( Data >> 2 ) & 0x07 ][ 1 ];
+		*Buffer++ = SubpxDecodeTable_Wide[ ( Data >> 2 ) & 0x07 ][ 0 ];
+		*Buffer++ = SubpxDecodeTable_Wide[ ( Data >> 2 ) & 0x07 ][ 1 ];
 
-		*Buffer++ = Subpixie::SubpxDecodeTable_Wide[ Data & 0x03 ][ 1 ];
+		*Buffer++ = SubpxDecodeTable_Wide[ Data & 0x03 ][ 1 ];
 		*Buffer++ = 0;
 	}
 }
@@ -131,9 +131,9 @@ static void Decode8x8( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Wide ) {
 		for ( y = 0; y < Font_8x8.Height; y++ ) {
 			Data = Subpixie_Font_Get_Byte( GlyphPtr++ );
 
-			*Buffer++ = Subpixie::SubpxDecodeTable[ ( Data >> 5 ) & 0x07 ];
-			*Buffer++ = Subpixie::SubpxDecodeTable[ ( Data >> 2 ) & 0x07 ];
-			*Buffer++ = Subpixie::SubpxDecodeTable[ Data & 0x03 ];
+			*Buffer++ = SubpxDecodeTable[ ( Data >> 5 ) & 0x07 ];
+			*Buffer++ = SubpxDecodeTable[ ( Data >> 2 ) & 0x07 ];
+			*Buffer++ = SubpxDecodeTable[ Data & 0x03 ];
 		}
 
 		return;

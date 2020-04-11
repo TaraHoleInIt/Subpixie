@@ -2,8 +2,7 @@
 #define _SUBPIXIE_H_
 
 #include <Arduino.h>
-
-#define RGB565( r, g, b ) ( uint16_t ) ( ( r << 11 ) | ( g << 5 ) | ( b ) )
+#include <stdint.h>
 
 #if defined __AVR__
 #include <avr/pgmspace.h>
@@ -15,6 +14,8 @@
 
 #define Subpixie_Font_Get_Byte( Ptr ) *Ptr
 #endif
+
+#define RGB565( r, g, b ) ( uint16_t ) ( ( r << 11 ) | ( g << 5 ) | ( b ) )
 
 /**
  * @brief Procedure to set the render window of the target LCD
@@ -84,24 +85,15 @@ private:
     const uint8_t* GetGlyphPtr( const uint8_t Char );
 
     /**
-     * @brief Decodes 1bpp linear font data into subpixels
+     * @brief Draws the given character at the given coordinates
      * 
-     * @param Char Character to decode
-     */
-    void DecodeGlyphSubpixel( const uint8_t Char );
-
-    /**
-     * @brief Draws the currently cached/decoded glyph at the given coordinates
-     * 
+     * @param Char Character to draw
      * @param x x
      * @param y y
      */
-    void DrawGlyph( int x, int y );
+    void DrawGlyph( const uint8_t Char, int x, int y );
 
 public:
-    static const uint16_t SubpxDecodeTable_Wide[ 8 ][ 2 ];
-    static const uint16_t SubpxDecodeTable[ 8 ];
-
     /** 
      * Creates a new Subpixie renderer with the given parameters.
      * @param DisplayWidth Width of LCD screen
@@ -145,6 +137,9 @@ public:
      */
     void SetPrintCoords( int x, int y );
 };
+
+extern const uint16_t SubpxDecodeTable_Wide[ 8 ][ 2 ];
+extern const uint16_t SubpxDecodeTable[ 8 ];
 
 extern const Subpixie_Fontdef Font_8x8;
 extern const Subpixie_Fontdef Font_6x8;

@@ -19,8 +19,8 @@ Subpixie::Subpixie( int DisplayWidth, int DisplayHeight, const Subpixie_Fontdef*
     PrintX = 0;
     PrintY = 0;
 
+    memset( GlyphCache, 0, sizeof( GlyphCache ) );
     SetFont( Font, Wide );
-    DecodeGlyphSubpixel( 0 );
 }
 
 void Subpixie::SetFont( const Subpixie_Fontdef* Font, bool Wide ) {
@@ -48,14 +48,12 @@ const uint8_t* Subpixie::GetGlyphPtr( const uint8_t Char ) {
     return Ptr + ( ( c * RoundedWidth * _Font->Height ) );
 }
 
-void Subpixie::DecodeGlyphSubpixel( const uint8_t Char ) {
+void Subpixie::DrawGlyph( const uint8_t Char, int x, int y ) {
     if ( Char != CachedGlyph ) {
         _Font->Decode( GetGlyphPtr( Char ), GlyphCache, _Wide );
         CachedGlyph = Char;
     }
-}
 
-void Subpixie::DrawGlyph( int x, int y ) {
     _SetAddressWindow( x, y, x + GlyphWidth, y + GlyphHeight );
     _WritePixels( GlyphCache, GlyphSize / 2 );
 }
@@ -83,8 +81,7 @@ size_t Subpixie::write( const uint8_t Data ) {
             break;
         }
         default: {
-            DecodeGlyphSubpixel( Data );
-            DrawGlyph( PrintX, PrintY );
+            DrawGlyph( Data, PrintX, PrintY );
 
             PrintX+= GlyphWidth;
             break;
@@ -104,24 +101,24 @@ void Subpixie::SetPrintCoords( int x, int y ) {
     PrintY = y;
 }
 
-const uint16_t Subpixie::SubpxDecodeTable_Wide[ 8 ][ 2 ] = {
-	{ RGB565( 0, 0, 0 ), RGB565( 0, 0, 0 ) }, // 000
-	{ RGB565( 0, 0, 0 ), RGB565( 0, 63, 31 ) }, // 001
-	{ RGB565( 0, 0, 31 ), RGB565( 31, 0, 0 ) }, // 010
-	{ RGB565( 0, 0, 31 ), RGB565( 31, 63, 31 ) }, // 011
-	{ RGB565( 31, 63, 0 ), RGB565( 0, 0, 0 ) }, // 100
-	{ RGB565( 31, 63, 0 ), RGB565( 0, 63, 31 ) }, // 101
-	{ RGB565( 31, 63, 31 ), RGB565( 31, 0, 0 ) }, // 110
-	{ RGB565( 31, 63, 31 ), RGB565( 31, 63, 31 ) } // 111
+extern const uint16_t SubpxDecodeTable_Wide[ 8 ][ 2 ] __attribute__( ( weak ) ) = {
+    { RGB565( 0, 0, 0 ), RGB565( 0, 0, 0 ) }, // 000
+    { RGB565( 0, 0, 0 ), RGB565( 0, 63, 31 ) }, // 001
+    { RGB565( 0, 0, 31 ), RGB565( 31, 0, 0 ) }, // 010
+    { RGB565( 0, 0, 31 ), RGB565( 31, 63, 31 ) }, // 011
+    { RGB565( 31, 63, 0 ), RGB565( 0, 0, 0 ) }, // 100
+    { RGB565( 31, 63, 0 ), RGB565( 0, 63, 31 ) }, // 101
+    { RGB565( 31, 63, 31 ), RGB565( 31, 0, 0 ) }, // 110
+    { RGB565( 31, 63, 31 ), RGB565( 31, 63, 31 ) } // 111
 };
 
-const uint16_t Subpixie::SubpxDecodeTable[ 8 ] = {
-	RGB565( 0, 0, 0 ),	// 000
-	RGB565( 0, 0, 31 ),	// 001
-	RGB565( 0, 63, 0 ),	// 010
-	RGB565( 0, 63, 31 ),	// 011
-	RGB565( 31, 0, 0 ),	// 100
-	RGB565( 31, 0, 31 ),	// 101
-	RGB565( 31, 63, 0 ),	// 110
-	RGB565( 31, 63, 31 )	// 111
+extern const uint16_t SubpxDecodeTable[ 8 ] __attribute__( ( weak ) ) = {
+    RGB565( 0, 0, 0 ),	// 000
+    RGB565( 0, 0, 31 ),	// 001
+    RGB565( 0, 63, 0 ),	// 010
+    RGB565( 0, 63, 31 ),	// 011
+    RGB565( 31, 0, 0 ),	// 100
+    RGB565( 31, 0, 31 ),	// 101
+    RGB565( 31, 63, 0 ),	// 110
+    RGB565( 31, 63, 31 )	// 111
 };
