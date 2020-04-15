@@ -4,8 +4,8 @@
 // https://opensource.org/licenses/MIT
 #include "subpixie.h"
 
-static void Decode8x8_Wide( const uint8_t* GlyphPtr, uint16_t* Buffer );
-static void Decode8x8( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Wide );
+static void Decode8x8_Wide( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Inverse );
+static void Decode8x8( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Wide, bool Inverse );
 
 static const uint8_t FontData_8x8[ ] FONT_DATA_IN_FLASH = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x30, 0x30, 0x30,
@@ -105,39 +105,44 @@ const Subpixie_Fontdef Font_8x8 = {
 	Decode8x8
 };
 
-static void Decode8x8_Wide( const uint8_t* GlyphPtr, uint16_t* Buffer ) {
+static void Decode8x8_Wide( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Inverse ) {
 	uint8_t Data = 0;
 	int y = 0;
 
 	for ( y = 0; y < Font_8x8.Height; y++ ) {
 		Data = Subpixie_Font_Get_Byte( GlyphPtr++ );
-
+		Data = ( Inverse == true ) ? ~Data : Data;
+		
 		*Buffer++ = SubpxDecodeTable_Wide[ ( Data >> 5 ) & 0x07 ][ 0 ];
 		*Buffer++ = SubpxDecodeTable_Wide[ ( Data >> 5 ) & 0x07 ][ 1 ];
 
 		*Buffer++ = SubpxDecodeTable_Wide[ ( Data >> 2 ) & 0x07 ][ 0 ];
 		*Buffer++ = SubpxDecodeTable_Wide[ ( Data >> 2 ) & 0x07 ][ 1 ];
 
-		*Buffer++ = SubpxDecodeTable_Wide[ Data & 0x03 ][ 1 ];
-		*Buffer++ = 0;
+		*Buffer++ = SubpxDecodeTable_Wide[ ( ( ( Data & 0x03 ) ) << 1 ) | Inverse ][ 0 ];
+		*Buffer++ = SubpxDecodeTable_Wide[ ( ( ( Data & 0x03 ) ) << 1 ) | Inverse ][ 1 ];
 	}
 }
 
-static void Decode8x8( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Wide ) {
+static void Decode8x8( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Wide, bool Inverse ) {
 	uint8_t Data = 0;
 	int y = 0;
 
 	if ( Wide == false ) {
 		for ( y = 0; y < Font_8x8.Height; y++ ) {
 			Data = Subpixie_Font_Get_Byte( GlyphPtr++ );
+			Data = ( Inverse == true ) ? ~Data : Data;
+
+			// ABCDEFGH
+			// RGBRGBRGB
 
 			*Buffer++ = SubpxDecodeTable[ ( Data >> 5 ) & 0x07 ];
 			*Buffer++ = SubpxDecodeTable[ ( Data >> 2 ) & 0x07 ];
-			*Buffer++ = SubpxDecodeTable[ Data & 0x03 ];
+			*Buffer++ = SubpxDecodeTable[ ( ( Data & 0x03 ) << 1 ) | Inverse ];
 		}
 
 		return;
 	}
 
-	Decode8x8_Wide( GlyphPtr, Buffer );
+	Decode8x8_Wide( GlyphPtr, Buffer, Inverse );
 }

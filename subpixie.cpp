@@ -50,7 +50,7 @@ const uint8_t* Subpixie::GetGlyphPtr( const uint8_t Char ) {
 
 void Subpixie::DrawGlyph( const uint8_t Char, int x, int y ) {
     if ( Char != CachedGlyph ) {
-        _Font->Decode( GetGlyphPtr( Char ), GlyphCache, _Wide );
+        _Font->Decode( GetGlyphPtr( Char ), GlyphCache, _Wide, _Inverse );
         CachedGlyph = Char;
     }
 
@@ -80,6 +80,14 @@ size_t Subpixie::write( const uint8_t Data ) {
 
             break;
         }
+        case '\t': {
+            write( ' ' );
+            write( ' ' );
+            write( ' ' );
+            write( ' ' );
+
+            break;
+        }
         default: {
             DrawGlyph( Data, PrintX, PrintY );
 
@@ -99,6 +107,18 @@ void Subpixie::GetPrintCoords( int& x, int& y ) {
 void Subpixie::SetPrintCoords( int x, int y ) {
     PrintX = x;
     PrintY = y;
+}
+
+void Subpixie::SetInverse( bool Inverse ) {
+    _Inverse = Inverse;
+}
+
+int Subpixie::GetGlyphWidth( void ) {
+    return GlyphWidth;
+}
+
+int Subpixie::GetGlyphHeight( void ) {
+    return GlyphHeight;
 }
 
 extern const uint16_t SubpxDecodeTable_Wide[ 8 ][ 2 ] __attribute__( ( weak ) ) = {

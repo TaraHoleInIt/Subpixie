@@ -4,8 +4,8 @@
 // https://opensource.org/licenses/MIT
 #include "subpixie.h"
 
-static void Decode6x8_Wide(const uint8_t *GlyphPtr, uint16_t *Buffer);
-static void Decode6x8(const uint8_t *GlyphPtr, uint16_t *Buffer, bool Wide);
+static void Decode6x8_Wide( const uint8_t *GlyphPtr, uint16_t *Buffer, bool Inverse );
+static void Decode6x8( const uint8_t *GlyphPtr, uint16_t *Buffer, bool Wide, bool Inverse );
 
 static const unsigned char FontData_6x8[ ] FONT_DATA_IN_FLASH = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x70, 0x70, 0x20,
@@ -83,12 +83,13 @@ const Subpixie_Fontdef Font_6x8 = {
 	Decode6x8
 };
 
-static void Decode6x8_Wide( const uint8_t* GlyphPtr, uint16_t* Buffer ) {
+static void Decode6x8_Wide( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Inverse ) {
 	uint8_t Data = 0;
 	int y = 0;
 
 	for ( y = 0; y < Font_6x8.Height; y++ ) {
 		Data = Subpixie_Font_Get_Byte( GlyphPtr++ );
+		Data = ( Inverse == true ) ? ~Data : Data;
 
 		*Buffer++ = SubpxDecodeTable_Wide[ ( Data >> 5 ) & 0x07 ][ 0 ];
 		*Buffer++ = SubpxDecodeTable_Wide[ ( Data >> 5 ) & 0x07 ][ 1 ];
@@ -98,13 +99,14 @@ static void Decode6x8_Wide( const uint8_t* GlyphPtr, uint16_t* Buffer ) {
 	}
 }
 
-static void Decode6x8( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Wide ) {
+static void Decode6x8( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Wide, bool Inverse ) {
 	uint8_t Data = 0;
 	int y = 0;
 
 	if ( Wide == false ) {
 		for ( y = 0; y < Font_6x8.Height; y++ ) {
 			Data = Subpixie_Font_Get_Byte( GlyphPtr++ );
+			Data = ( Inverse == true ) ? ~Data : Data;
 
 			*Buffer++ = SubpxDecodeTable[ ( Data >> 5 ) & 0x07 ];
 			*Buffer++ = SubpxDecodeTable[ ( Data >> 2 ) & 0x07 ];
@@ -113,5 +115,5 @@ static void Decode6x8( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Wide ) {
 		return;
 	}
 
-	Decode6x8_Wide( GlyphPtr, Buffer );
+	Decode6x8_Wide( GlyphPtr, Buffer, Inverse );
 }

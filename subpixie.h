@@ -42,7 +42,7 @@ typedef void ( *WritePixelsProc ) ( uint16_t* Pixels, size_t Count );
  * @param Buffer Pointer to buffer which will receive decoded data
  * @param Wide Render twice as wide
  */
-typedef void ( *SubpixelDecodeProc ) ( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Wide );
+typedef void ( *SubpixelDecodeProc ) ( const uint8_t* GlyphPtr, uint16_t* Buffer, bool Wide, bool Inverse );
 
 typedef struct {
     const uint8_t* Fontdata;
@@ -71,6 +71,7 @@ private:
     int GlyphWidth = 0; /**< Width in pixels of decoded subpixel font */
     int GlyphHeight = 0; /**< Height of characters in font */
 
+    bool _Inverse; /**< If true, render fonts with the colour inverted */
     bool _Wide; /**< If true, render fonts twice as wide */
 
     int PrintX; /**< Current x coordinate for drawing characters */
@@ -83,15 +84,6 @@ private:
      * @return const uint8_t* Pointer to font data
      */
     const uint8_t* GetGlyphPtr( const uint8_t Char );
-
-    /**
-     * @brief Draws the given character at the given coordinates
-     * 
-     * @param Char Character to draw
-     * @param x x
-     * @param y y
-     */
-    void DrawGlyph( const uint8_t Char, int x, int y );
 
 public:
     /** 
@@ -136,6 +128,20 @@ public:
      * @param y New y coordinate
      */
     void SetPrintCoords( int x, int y );
+
+    /**
+     * @brief Draws the given character at the given coordinates
+     * 
+     * @param Char Character to draw
+     * @param x x
+     * @param y y
+     */
+    void DrawGlyph( const uint8_t Char, int x, int y );
+
+    void SetInverse( bool Inverse );
+
+    int GetGlyphWidth( void );
+    int GetGlyphHeight( void );
 };
 
 extern const uint16_t SubpxDecodeTable_Wide[ 8 ][ 2 ];
