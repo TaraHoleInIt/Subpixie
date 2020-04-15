@@ -17,6 +17,8 @@
 
 #define RGB565( r, g, b ) ( uint16_t ) ( ( r << 11 ) | ( g << 5 ) | ( b ) )
 
+#define Glyph_Cache_Buffer_Size 8 * 8
+
 /**
  * @brief Procedure to set the render window of the target LCD
  * 
@@ -54,8 +56,16 @@ typedef struct {
 } Subpixie_Fontdef;
 
 class Subpixie : public Print {
+protected:
+    int _DisplayWidth = 0; /**< Width of target display */
+    int _DisplayHeight = 0; /**< Height of target display */
+
+    int GlyphSize = 0; /**< Size in bytes of decoded character glyphs */
+    int GlyphWidth = 0; /**< Width in pixels of decoded subpixel font */
+    int GlyphHeight = 0; /**< Height of characters in font */
+
 private:
-    uint16_t GlyphCache[ 6 * 8 ]; /**< Space for decoded glyph data */
+    uint16_t GlyphCache[ Glyph_Cache_Buffer_Size ]; /**< Space for decoded glyph data */
 
     SetAddressWindowProc _SetAddressWindow; /**< Callback to function to set the render window of the target LCD */
     WritePixelsProc _WritePixels; /**< Callback to function to write pixels to the target LCD */
@@ -63,13 +73,6 @@ private:
     const Subpixie_Fontdef* _Font; /**< Currently selected font */
 
     uint8_t CachedGlyph; /**< Value of last decoded character */
-
-    int _DisplayWidth = 0; /**< Width of target display */
-    int _DisplayHeight = 0; /**< Height of target display */
-
-    int GlyphSize = 0; /**< Size in bytes of decoded character glyphs */
-    int GlyphWidth = 0; /**< Width in pixels of decoded subpixel font */
-    int GlyphHeight = 0; /**< Height of characters in font */
 
     bool _Inverse; /**< If true, render fonts with the colour inverted */
     bool _Wide; /**< If true, render fonts twice as wide */
@@ -135,8 +138,9 @@ public:
      * @param Char Character to draw
      * @param x x
      * @param y y
+     * @param Inverse Draw character with the colours inverted
      */
-    void DrawGlyph( const uint8_t Char, int x, int y );
+    void DrawGlyph( const uint8_t Char, int x, int y, bool Inverse );
 
     void SetInverse( bool Inverse );
 

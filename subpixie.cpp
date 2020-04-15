@@ -48,9 +48,9 @@ const uint8_t* Subpixie::GetGlyphPtr( const uint8_t Char ) {
     return Ptr + ( ( c * RoundedWidth * _Font->Height ) );
 }
 
-void Subpixie::DrawGlyph( const uint8_t Char, int x, int y ) {
+void Subpixie::DrawGlyph( const uint8_t Char, int x, int y, bool Inverse ) {
     if ( Char != CachedGlyph ) {
-        _Font->Decode( GetGlyphPtr( Char ), GlyphCache, _Wide, _Inverse );
+        _Font->Decode( GetGlyphPtr( Char ), GlyphCache, _Wide, Inverse );
         CachedGlyph = Char;
     }
 
@@ -89,7 +89,7 @@ size_t Subpixie::write( const uint8_t Data ) {
             break;
         }
         default: {
-            DrawGlyph( Data, PrintX, PrintY );
+            DrawGlyph( Data, PrintX, PrintY, _Inverse );
 
             PrintX+= GlyphWidth;
             break;
